@@ -1,0 +1,7 @@
+## Interface: 110007
+## Title: AutoMacros
+## SavedVariables: AutoMacros
+## Version: 1
+## Notes: Auto update your macros in arena
+## Author: Punksoft
+AutoMacros.lua
