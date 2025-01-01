@@ -282,17 +282,10 @@ frameCheck:RegisterEvent("GROUP_ROSTER_UPDATE")
 frameCheck:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS")
 frameCheck:SetScript("OnEvent", function(self, event, ...)
     
-   if event == "ARENA_OPPONENT_UPDATE" and not IsInCombat() then
+   if event == "ARENA_PREP_OPPONENT_SPECIALIZATIONS" and not IsInCombat() then
         PartyIdSearch()
         ReplacePartyMacros(MacrosList,ResultRoleSearch);
-        
-        
-    end
-    
-    if event == "GROUP_ROSTER_UPDATE" and not IsInCombat() then
-        PartyIdSearch()
-        ReplacePartyMacros(MacrosList,ResultRoleSearch);
-          
+             
     end
     
 end)
