@@ -15,21 +15,17 @@ end
 
 --role search
 local function PartyIdSearch()
-    ResultRoleSearch[1] = "party3"
-    ResultRoleSearch[2] = "party3"
-    ResultRoleSearch[3] = "arena3"
+    ResultRoleSearch[1] = "party1"
+    ResultRoleSearch[2] = "party1"
+    ResultRoleSearch[3] = "arena1"
  
    
     for N=1,2 do
         local gUnit = "party"..N;
         local rawRole; 
         rawRole = UnitGroupRolesAssigned(gUnit);
-        print("Unit ".. gUnit .. " Role "..rawRole)
         if string.find(rawRole,"HEALER")  or string.find(rawRole,"TANK") then
             ResultRoleSearch[1] = "party"..N;
-            print("Heal ".. ResultRoleSearch[1])
-            print("Role heal ally check ".. rawRole)
-            print("------")
         end
         if string.find(rawRole,"DAMAGER") then
             ResultRoleSearch[2] = "party"..N;
@@ -71,24 +67,31 @@ end
 
 --Recording found roles in the macro list
 local function ReplacePartyMacros(macrosList, rolesList)
+    local sortedKeys = {}
+
+  
+    for key in pairs(macrosList) do
+        table.insert(sortedKeys, key)
+    end
+
+   
+    table.sort(sortedKeys)
+
+   
     local index = 1
-    
-    for key, values in pairs(macrosList) do
+    for _, key in ipairs(sortedKeys) do
+        local values = macrosList[key]
         local secondValue = rolesList[index]
-        
+
         if secondValue then
-                
-        
             for _, value in ipairs(values) do
                 if value ~= "" and value ~= nil then
-                        ChangeMacros(value,secondValue)
+                    ChangeMacros(value, secondValue)
                 end
             end
             index = index + 1
-                
         end
     end
-    
 end
     
    
@@ -100,9 +103,9 @@ local function OnEvent(self, event, ...)
         if addonName == "AutoMacros" then
             if not AutoMacros then
                 AutoMacros = {};
-                AutoMacros["AlliedHeal"] = {};
-                AutoMacros["AlliedDamager"] = {};
-                AutoMacros["EnemyArenaHeal"] = {};
+                AutoMacros["1_AlliedHeal"] = {};
+                AutoMacros["2_AlliedDamager"] = {};
+                AutoMacros["3_EnemyArenaHeal"] = {};
             end
             -- Загрузка сохранённых данных
             MacrosList = AutoMacros
@@ -137,7 +140,7 @@ function SlashCmdList.HELLOWORLD(msg, editbox)
     MyAddon.frame.title = MyAddon.frame:CreateFontString(nil, "OVERLAY")
     MyAddon.frame.title:SetFontObject("GameFontHighlight")
     MyAddon.frame.title:SetPoint("LEFT", MyAddon.frame.TitleBg, "LEFT", 5, 0)
-    MyAddon.frame.title:SetText("My Addon Window")
+    MyAddon.frame.title:SetText("Auto Macros")
 
     MyAddon.scrollFrame = CreateFrame("ScrollFrame", "MyAddonScrollFrame", MyAddon.frame, "UIPanelScrollFrameTemplate")
     MyAddon.scrollFrame:SetSize(380, 500)
@@ -263,8 +266,20 @@ function SlashCmdList.HELLOWORLD(msg, editbox)
     end
 
     local function createAllGroups()
+        local sortedKeys = {}
+    
+        
+        for groupName in pairs(MyAddon.data) do
+            table.insert(sortedKeys, groupName)
+        end
+    
+        
+        table.sort(sortedKeys)
+    
+       
         local index = 1
-        for groupName, macros in pairs(MyAddon.data) do
+        for _, groupName in ipairs(sortedKeys) do
+            local macros = MyAddon.data[groupName]
             local groupFrame = createGroup(MyAddon.scrollChild, groupName, macros, index)
             table.insert(MyAddon.groups, groupFrame)
             index = index + 1
