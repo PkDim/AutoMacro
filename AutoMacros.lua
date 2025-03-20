@@ -29,8 +29,10 @@ local function PartyIdSearch()
         end
         if string.find(rawRole,"DAMAGER") then
             ResultRoleSearch[2] = "party"..N;
-        end
+        end       
     end
+
+             
     
     for i = 1, GetNumArenaOpponentSpecs() do
         local specID = GetArenaOpponentSpec(i)
@@ -60,7 +62,7 @@ local function ChangeMacros(NameOfMacro,ValueOfChange)
         TextMacro = TextMacro:gsub(word, ValueOfChange)
     end
     local macroIndex = GetMacroIndexByName(NameOfMacro);
-    if not UnitAffectingCombat("player") and GetBattlefieldInstanceExpiration() == 0 then
+    if not UnitAffectingCombat("player") then
         EditMacro(macroIndex, nil, nil, TextMacro);
     end
 end
@@ -82,7 +84,6 @@ local function ReplacePartyMacros(macrosList, rolesList)
     for _, key in ipairs(sortedKeys) do
         local values = macrosList[key]
         local secondValue = rolesList[index]
-
         if secondValue then
             for _, value in ipairs(values) do
                 if value ~= "" and value ~= nil then
@@ -90,6 +91,7 @@ local function ReplacePartyMacros(macrosList, rolesList)
                 end
             end
             index = index + 1
+            
         end
     end
 end
@@ -297,10 +299,12 @@ frameCheck:RegisterEvent("GROUP_ROSTER_UPDATE")
 frameCheck:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS")
 frameCheck:SetScript("OnEvent", function(self, event, ...)
     
-   if event == "ARENA_PREP_OPPONENT_SPECIALIZATIONS" and not IsInCombat() then
-        PartyIdSearch()
-        ReplacePartyMacros(MacrosList,ResultRoleSearch);
-             
+   if (event == "ARENA_PREP_OPPONENT_SPECIALIZATIONS" or event == "GROUP_ROSTER_UPDATE") and not IsInCombat() then
+        local inInstance, instanceType = IsInInstance()
+            if inInstance and instanceType == "arena" then
+            PartyIdSearch()
+            ReplacePartyMacros(MacrosList,ResultRoleSearch);
+        end
     end
     
 end)
